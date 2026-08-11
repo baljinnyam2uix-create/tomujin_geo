@@ -1,0 +1,23 @@
+[build]
+  publish = "."
+  functions = "netlify/functions"
+
+[[redirects]]
+  from = "/auth"
+  to = "/auth/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/teacher"
+  to = "/teacher/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/student"
+  to = "/student/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin/index.html"
+  status = 200

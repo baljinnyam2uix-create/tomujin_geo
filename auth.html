@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Нэвтрэх / Бүртгүүлэх | Сонирхолтой Газарзүй</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <main class="auth-page">
+    <section class="auth-side">
+      <a class="auth-brand" href="/"><span class="brand-dot">🌍</span><div><b>Сонирхолтой Газарзүй</b><div style="font-size:10px;opacity:.7;margin-top:3px">СУРГАЛТЫН ПЛАТФОРМ</div></div></a>
+      <div><h1>Нэг бүртгэлээр өөрийн орчиндоо нэвтэрнэ.</h1><p>Багш, сурагч аль ч хэрэглэгч нэг нэвтрэх хэсгийг ашиглана. Систем таны бүртгэлийн төрлийг автоматаар таньж зөв самбар руу оруулна.</p></div>
+      <p style="font-size:11px">© 2026 Geo Education Mongolia</p>
+    </section>
+    <section class="auth-main">
+      <div class="auth-card auth-card-wide">
+        <a class="small-link" href="/">← Нүүр хуудас</a>
+        <h2 id="authTitle">Нэвтрэх</h2>
+        <p id="authSubtitle">Бүртгэлтэй и-мэйл, нууц үгээ оруулна уу.</p>
+        <div class="mode-tabs"><button id="loginTab" class="active" type="button">Нэвтрэх</button><button id="registerTab" type="button">Бүртгүүлэх</button></div>
+        <div id="errorBox" class="error-box"></div><div id="successBox" class="success-box"></div>
+
+        <form id="loginForm">
+          <div class="field"><label>И-мэйл</label><input id="loginEmail" type="email" required placeholder="name@example.mn"></div>
+          <div class="field"><label>Нууц үг</label><input id="loginPassword" type="password" required minlength="6" placeholder="••••••••"></div>
+          <button class="btn btn-primary btn-block" type="submit">Нэвтрэх →</button>
+        </form>
+
+        <form id="registerForm" class="hidden">
+          <div class="field full">
+            <label>Та аль хэрэглэгч вэ?</label>
+            <div class="role-picker" id="rolePicker">
+              <button type="button" class="role-option active" data-role="student"><span>🎓</span><b>Сурагч</b><small>Хичээл үзэх, даалгавар, шалгалт, дүн, AI багш</small></button>
+              <button type="button" class="role-option" data-role="teacher"><span>👩‍🏫</span><b>Багш</b><small>Агуулга, дүн, сурагчийн ахиц, Excel тайлан</small></button>
+            </div>
+            <input type="hidden" id="regRole" value="student">
+          </div>
+          <div class="form-grid">
+            <div class="field full"><label>Овог, нэр</label><input id="regName" required placeholder="Овог нэр"></div>
+            <div class="field full"><label>Сургууль</label><input id="regSchool" required placeholder="Сургуулийн нэр"></div>
+            <div class="field" id="studentGradeField"><label>Анги</label><select id="regGrade"><option value="7">7-р анги</option><option value="8">8-р анги</option><option value="9">9-р анги</option><option value="10">10-р анги</option><option value="11">11-р анги</option><option value="12">12-р анги</option></select></div>
+            <div class="field hidden" id="teacherSubjectField"><label>Хичээл / чиглэл</label><input id="regSubject" value="Газарзүй"></div>
+            <div class="field full"><label>И-мэйл</label><input id="regEmail" type="email" required placeholder="name@example.mn"></div>
+            <div class="field"><label>Нууц үг</label><input id="regPassword" type="password" minlength="6" required></div>
+            <div class="field"><label>Нууц үг давтах</label><input id="regPassword2" type="password" minlength="6" required></div>
+          </div>
+          <button class="btn btn-primary btn-block" id="registerSubmit" type="submit">Сурагчаар бүртгүүлэх →</button>
+        </form>
+
+        <div id="demoNote" class="auth-note demo hidden"><b>Demo горим</b><br>Сурагч: student@demo.mn / student123<br>Багш: teacher@demo.mn / teacher123<br>Админ: <a class="small-link" href="/admin">/admin</a></div>
+        <div class="auth-note">Жинхэнэ олон хэрэглэгчтэй ажиллуулахын тулд <b>SETUP.md</b>-ийн дагуу Supabase-ийг холбоно.</div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/config.js"></script><script src="/backend.js"></script><script src="/auth.js"></script>
+</body>
+</html>

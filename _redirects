@@ -1,0 +1,5 @@
+/auth /auth/index.html 200
+/teacher /teacher/index.html 200
+/student /student/index.html 200
+/admin /admin/index.html 200
+/student-auth /auth/index.html 200
