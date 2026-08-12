@@ -8,7 +8,7 @@ function setMode(mode){
   $('#loginTab').classList.toggle('active', !reg); $('#registerTab').classList.toggle('active', reg);
   $('#loginForm').classList.toggle('hidden', reg); $('#registerForm').classList.toggle('hidden', !reg);
   $('#authTitle').textContent = reg ? 'Бүртгүүлэх' : 'Нэвтрэх';
-  $('#authSubtitle').textContent = reg ? 'Эхлээд Багш эсвэл Сурагч гэдгээ сонгоод бүртгэл үүсгэнэ үү.' : 'Бүртгэлтэй и-мэйл, нууц үгээ оруулна уу.';
+  $('#authSubtitle').textContent = reg ? 'Мэдээллээ бөглөж хүсэлт илгээнэ. Админ баталсны дараа таны эрх идэвхжинэ.' : 'Баталгаажсан бүртгэлийн и-мэйл, нууц үгээ оруулна уу.';
   history.replaceState(null,'', reg ? '/auth?mode=register' : '/auth');
 }
 function setRole(role){
@@ -24,7 +24,7 @@ $$('.role-option').forEach(b=>b.onclick=()=>setRole(b.dataset.role));
 setRole('student');
 if(new URLSearchParams(location.search).get('mode')==='register') setMode('register');
 if(GeoBackend.mode==='demo') $('#demoNote').classList.remove('hidden');
-(async()=>{ try { const { profile } = await GeoBackend.getSession(); if(profile?.status==='active') redirectByRole(profile); } catch{} })();
+(async()=>{ try { const { profile } = await GeoBackend.getSession(); if(profile?.status==='active') return redirectByRole(profile); if(profile?.status){ await GeoBackend.signOut(); if(profile.status==='pending') message('Таны бүртгэл админы баталгаажуулалт хүлээж байна. Батлагдсаны дараа нэвтэрнэ үү.','success'); } } catch{} })();
 
 $('#loginForm').addEventListener('submit', async e => {
   e.preventDefault(); clearMessage(); const btn=e.submitter; btn.disabled=true; btn.textContent='Нэвтэрч байна...';
@@ -38,7 +38,8 @@ $('#registerForm').addEventListener('submit', async e => {
   const role=$('#regRole').value, btn=e.submitter; btn.disabled=true; btn.textContent='Бүртгэж байна...';
   try {
     const result = await GeoBackend.signUpUnified({ role, email:$('#regEmail').value.trim(), password:$('#regPassword').value, fullName:$('#regName').value.trim(), school:$('#regSchool').value.trim(), subject:$('#regSubject').value.trim()||'Газарзүй', grade:$('#regGrade').value });
-    if(result.needsEmailConfirmation){ message('Бүртгэл үүслээ. И-мэйл баталгаажуулсны дараа нэвтэрнэ үү.','success'); btn.disabled=false; setRole(role); }
-    else redirectByRole(result.profile);
+    const confirmText = result.needsEmailConfirmation ? ' И-мэйлээр ирсэн баталгаажуулах холбоосыг мөн нээнэ үү.' : '';
+    message(`Бүртгэл амжилттай илгээгдлээ.${confirmText} Админ таны бүртгэлийг баталсны дараа нэвтрэх боломжтой болно.`,'success');
+    e.target.reset(); setRole(role); btn.disabled=false;
   } catch(err){ message(err.message || 'Бүртгэл үүсгэхэд алдаа гарлаа.'); btn.disabled=false; setRole(role); }
 });

@@ -13,15 +13,20 @@ create table if not exists public.profiles (
   subject text not null default 'Газарзүй',
   grade text,
   role text not null default 'teacher',
-  status text not null default 'active',
+  status text not null default 'pending',
+  approved_at timestamptz,
+  approved_by uuid references public.profiles(id) on delete set null,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 alter table public.profiles add column if not exists grade text;
+alter table public.profiles add column if not exists approved_at timestamptz;
+alter table public.profiles add column if not exists approved_by uuid references public.profiles(id) on delete set null;
+alter table public.profiles alter column status set default 'pending';
 alter table public.profiles drop constraint if exists profiles_role_check;
 alter table public.profiles add constraint profiles_role_check check (role in ('student','teacher','admin'));
 alter table public.profiles drop constraint if exists profiles_status_check;
-alter table public.profiles add constraint profiles_status_check check (status in ('active','suspended'));
+alter table public.profiles add constraint profiles_status_check check (status in ('pending','active','suspended','rejected'));
 alter table public.profiles drop constraint if exists profiles_grade_check;
 alter table public.profiles add constraint profiles_grade_check check (grade is null or grade='' or grade in ('7','8','9','10','11','12'));
 
@@ -108,7 +113,7 @@ begin
   safe_role:=case when requested='teacher' then 'teacher' else 'student' end;
   safe_grade:=case when safe_role='student' then nullif(new.raw_user_meta_data->>'grade','') else null end;
   insert into public.profiles(id,email,full_name,school,subject,grade,role,status)
-  values(new.id,coalesce(new.email,''),coalesce(new.raw_user_meta_data->>'full_name',''),coalesce(new.raw_user_meta_data->>'school',''),coalesce(new.raw_user_meta_data->>'subject','Газарзүй'),safe_grade,safe_role,'active')
+  values(new.id,coalesce(new.email,''),coalesce(new.raw_user_meta_data->>'full_name',''),coalesce(new.raw_user_meta_data->>'school',''),coalesce(new.raw_user_meta_data->>'subject','Газарзүй'),safe_grade,safe_role,'pending')
   on conflict(id) do nothing;
   return new;
 end; $$;
@@ -195,5 +200,6 @@ drop policy if exists "course_files_insert_own" on storage.objects;create policy
 drop policy if exists "course_files_select_own_or_admin" on storage.objects;drop policy if exists "course_files_select_role_aware" on storage.objects;create policy "course_files_select_role_aware" on storage.objects for select to authenticated using(bucket_id='course-files' and ((storage.foldername(name))[1]=auth.uid()::text or public.is_admin() or public.student_can_access_file(name)));
 drop policy if exists "course_files_delete_own_or_admin" on storage.objects;create policy "course_files_delete_own_or_admin" on storage.objects for delete to authenticated using(bucket_id='course-files' and ((storage.foldername(name))[1]=auth.uid()::text or public.is_admin()));
 
--- FIRST ADMIN: register normally, then run this once with your email:
--- update public.profiles set role='admin' where email='YOUR_ADMIN_EMAIL@example.mn';
+-- FIRST ADMIN: register normally, then run this once with your email.
+-- This bypasses the normal approval queue only for the first administrator:
+-- update public.profiles set role='admin', status='active', approved_at=now() where email='YOUR_ADMIN_EMAIL@example.mn';

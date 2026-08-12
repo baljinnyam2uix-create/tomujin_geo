@@ -11,7 +11,7 @@
   <main class="auth-page">
     <section class="auth-side">
       <a class="auth-brand" href="/"><span class="brand-dot">🌍</span><div><b>Сонирхолтой Газарзүй</b><div style="font-size:10px;opacity:.7;margin-top:3px">СУРГАЛТЫН ПЛАТФОРМ</div></div></a>
-      <div><h1>Нэг бүртгэлээр өөрийн орчиндоо нэвтэрнэ.</h1><p>Багш, сурагч аль ч хэрэглэгч нэг нэвтрэх хэсгийг ашиглана. Систем таны бүртгэлийн төрлийг автоматаар таньж зөв самбар руу оруулна.</p></div>
+      <div><h1>Сургалтын орчинд аюулгүй, хяналттай нэвтэрнэ.</h1><p>Багш, сурагч нэг нэвтрэх хэсгийг ашиглана. Шинэ бүртгэл бүр сургуулийн админаар баталгаажсаны дараа идэвхжинэ.</p></div>
       <p style="font-size:11px">© 2026 Geo Education Mongolia</p>
     </section>
     <section class="auth-main">
@@ -46,11 +46,12 @@
             <div class="field"><label>Нууц үг</label><input id="regPassword" type="password" minlength="6" required></div>
             <div class="field"><label>Нууц үг давтах</label><input id="regPassword2" type="password" minlength="6" required></div>
           </div>
+          <div class="approval-flow"><div><span>1</span><b>Бүртгэл илгээх</b></div><i>→</i><div><span>2</span><b>Админ батлах</b></div><i>→</i><div><span>3</span><b>Нэвтрэх</b></div></div>
           <button class="btn btn-primary btn-block" id="registerSubmit" type="submit">Сурагчаар бүртгүүлэх →</button>
         </form>
 
         <div id="demoNote" class="auth-note demo hidden"><b>Demo горим</b><br>Сурагч: student@demo.mn / student123<br>Багш: teacher@demo.mn / teacher123<br>Админ: <a class="small-link" href="/admin">/admin</a></div>
-        <div class="auth-note">Жинхэнэ олон хэрэглэгчтэй ажиллуулахын тулд <b>SETUP.md</b>-ийн дагуу Supabase-ийг холбоно.</div>
+        <div class="auth-note secure-note"><b>🛡️ Баталгаажуулалттай бүртгэл</b><br>Шинээр үүсгэсэн багш, сурагчийн эрх шууд идэвхжихгүй. Админ баталсны дараа нэвтэрнэ.</div>
       </div>
     </section>
   </main>

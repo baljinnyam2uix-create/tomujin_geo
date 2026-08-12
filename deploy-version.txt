@@ -1,2 +1,2 @@
-Tomujin LMS v2
-Supabase connected build: 2026-08-11
+Build: 2026-08-12
+Features: professional UI + admin-approved teacher/student registration
