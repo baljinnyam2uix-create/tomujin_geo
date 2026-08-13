@@ -1,2 +1,1 @@
-Build: 2026-08-12
-Features: professional UI + admin-approved teacher/student registration
+v5-reference-redesign-2026-08-12

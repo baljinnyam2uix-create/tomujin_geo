@@ -2,18 +2,39 @@
 <html lang="mn">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Админ | Сонирхолтой Газарзүй</title>
+  <title>Админ | GEid Design System</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><link rel="stylesheet" href="/app.css">
 </head>
-<body>
-<section id="adminLoginView" class="auth-page">
-  <section class="auth-side"><a class="auth-brand" href="/"><span class="brand-dot">🛡️</span><div><b>Geo Education</b><div style="font-size:10px;opacity:.7;margin-top:3px">АДМИН УДИРДЛАГА</div></div></a><div><h1>Платформын бүх тохиргоо нэг самбарт.</h1><p>Багшийн эрх, агуулгын нийтлэл, сургалтын материал болон системийн үндсэн тохиргоог админ хэрэглэгч удирдана.</p></div><p style="font-size:11px">Тусдаа админ нэвтрэх хаяг: /admin</p></section>
-  <section class="auth-main"><div class="auth-card"><a class="small-link" href="/">← Нүүр хуудас</a><h2>Админ нэвтрэх</h2><p>Зөвхөн админ эрхтэй хэрэглэгч нэвтэрнэ.</p><div id="adminLoginError" class="error-box"></div><form id="adminLoginForm"><div class="field"><label>Админ и-мэйл</label><input id="adminEmail" type="email" required placeholder="admin@example.mn"></div><div class="field"><label>Нууц үг</label><input id="adminPassword" type="password" required></div><button class="btn btn-primary btn-block" type="submit">Админ самбар нээх →</button></form><div id="adminDemoNote" class="auth-note demo hidden"><b>Demo админ:</b><br>admin@demo.mn / admin123</div></div></section>
+<body class="geo-auth-body">
+<section id="adminLoginView" class="auth-page geo-auth-page">
+  <section class="auth-side geo-auth-side geo-admin-side">
+    <a class="geo-auth-brand" href="/"><img src="/assets/gis-footer-logo.png" alt="Tomujin alternative school Mongolia"></a>
+    <div class="geo-auth-copy">
+      <span class="geo-auth-kicker">● АДМИН УДИРДЛАГА</span>
+      <h1><b>Системийн</b><em>Удирдлага</em></h1>
+      <p>Багш, сурагчийн шинэ бүртгэл, сургалтын агуулга болон платформын үндсэн тохиргоог нэг самбараас хянана.</p>
+    </div>
+        <div class="geo-auth-mini"><span>🛡️</span><div><b>Админ эрх</b><small>Зөвхөн баталгаажсан admin хэрэглэгч нэвтэрнэ</small></div></div>
+  </section>
+  <section class="auth-main geo-auth-main">
+    <div class="auth-card geo-auth-card geo-admin-card">
+      <div class="geo-auth-card-head"><a class="small-link" href="/">← Нүүр хуудас</a><span class="geo-auth-chip">GEid · ADMIN</span></div>
+      <h2>Админ нэвтрэх</h2><p>Админ и-мэйл болон нууц үгээ оруулна уу.</p>
+      <div id="adminLoginError" class="error-box"></div>
+      <form id="adminLoginForm">
+        <div class="field"><label>Админ и-мэйл</label><input id="adminEmail" type="email" required placeholder="admin@geid.mn"></div>
+        <div class="field"><label>Нууц үг</label><input id="adminPassword" type="password" required placeholder="••••••••"></div>
+        <button class="btn btn-primary btn-block" type="submit">Админ самбар нээх →</button>
+      </form>
+      <div class="auth-note secure-note"><b>🔐 Аюулгүй нэвтрэлт</b><br>Админ эрхийг Supabase Auth болон profiles.role = admin нөхцөлөөр шалгана.</div>
+      <div id="adminDemoNote" class="auth-note demo hidden"><b>Demo админ:</b><br>admin@demo.mn / admin123</div>
+    </div>
+  </section>
 </section>
 
 <div id="adminApp" class="app-shell hidden">
-  <aside class="sidebar"><a class="logo" href="/"><span class="brand-dot">🛡️</span><div><b>Geo Education</b><small>АДМИН ПАНЕЛ</small></div></a><nav class="side-nav"><button class="nav-tab active" data-tab="overview">🏠 <span class="nav-label">Хяналтын самбар</span></button><button class="nav-tab" data-tab="users">👥 <span class="nav-label">Хэрэглэгчид</span><span id="pendingNavBadge" class="nav-count hidden">0</span></button><button class="nav-tab" data-tab="content">📚 <span class="nav-label">Бүх агуулга</span></button><button class="nav-tab" data-tab="settings">⚙️ <span class="nav-label">Тохиргоо</span></button><a href="/teacher">👩‍🏫 <span class="nav-label">Багшийн самбар</span></a><a href="/" target="_blank">🌐 <span class="nav-label">Сайт харах</span></a></nav><div class="sidebar-bottom"><div class="user-mini"><b id="adminSideName">Админ</b><small id="adminSideEmail">...</small></div><button class="logout-btn" id="adminLogoutBtn">↪ <span>Гарах</span></button></div></aside>
+  <aside class="sidebar"><a class="logo" href="/"><span class="brand-dot">🛡️</span><div><b>GEid Platform</b><small>АДМИН ПАНЕЛ</small></div></a><nav class="side-nav"><button class="nav-tab active" data-tab="overview">🏠 <span class="nav-label">Хяналтын самбар</span></button><button class="nav-tab" data-tab="users">👥 <span class="nav-label">Хэрэглэгчид</span><span id="pendingNavBadge" class="nav-count hidden">0</span></button><button class="nav-tab" data-tab="content">📚 <span class="nav-label">Бүх агуулга</span></button><button class="nav-tab" data-tab="settings">⚙️ <span class="nav-label">Тохиргоо</span></button><a href="/teacher">👩‍🏫 <span class="nav-label">Багшийн самбар</span></a><a href="/" target="_blank">🌐 <span class="nav-label">Сайт харах</span></a></nav><div class="sidebar-bottom"><div class="user-mini"><b id="adminSideName">Админ</b><small id="adminSideEmail">...</small></div><button class="logout-btn" id="adminLogoutBtn">↪ <span>Гарах</span></button></div></aside>
   <section class="main-panel"><header class="topbar"><h1 id="adminTopTitle">Админ хяналтын самбар</h1><div class="topbar-actions"><span id="adminBackendBadge" class="mode-badge">DEMO</span><a class="btn" href="/" target="_blank">Сайт нээх ↗</a></div></header><main class="content-area">
     <section class="tab-page active" id="tab-overview"><div class="admin-callout"><div><h2>Системийн удирдлага</h2><p>Багш, сурагч, сургалтын агуулга болон платформын төлөвийг эндээс хянана.</p></div><span>🛡️</span></div><div id="adminDemoNotice" class="notice hidden"><b>Demo горим.</b> Энд хийсэн өөрчлөлт зөвхөн энэ браузерт хадгалагдана. Supabase холбоход бүх хэрэглэгчид нэг өгөгдлийн сантай болно.</div><div class="stats-cards admin-stats"><div class="stat"><span>👥</span><strong id="userCount">0</strong><small>Нийт хэрэглэгч</small></div><div class="stat"><span>⏳</span><strong id="pendingCount">0</strong><small>Батлах хүсэлт</small></div><div class="stat"><span>🎓</span><strong id="studentCount">0</strong><small>Сурагч</small></div><div class="stat"><span>👩‍🏫</span><strong id="teacherCount">0</strong><small>Багш</small></div><div class="stat"><span>📚</span><strong id="allContentCount">0</strong><small>Нийт агуулга</small></div><div class="stat"><span>✅</span><strong id="allPublishedCount">0</strong><small>Нийтэлсэн</small></div></div><div class="panel approval-panel"><div class="panel-head"><div><h3>🛡️ Баталгаажуулах хүсэлтүүд</h3><p class="panel-sub">Шинээр бүртгүүлсэн багш, сурагч админ баталсны дараа системд нэвтэрнэ.</p></div><button class="btn btn-soft" data-tab-jump="users">Бүх хэрэглэгч</button></div><div id="pendingApprovals"></div></div><div class="panel recent-panel"><div class="panel-head"><h3>Сүүлд нэмсэн материал</h3><button class="btn btn-soft" data-tab-jump="content">Бүгдийг харах</button></div><div id="adminRecent"></div></div></section>
 

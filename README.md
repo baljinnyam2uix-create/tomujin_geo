@@ -17,3 +17,9 @@
 - Netlify + Supabase ашиглахад бэлэн бүтэц
 
 Тохиргоог `SETUP.md`-ээс харна уу.
+
+## v5 visual redesign
+- Homepage redesigned from the provided geography reference image.
+- Reference artwork is bundled locally in `assets/geography-hero-art.webp` (no expiring external URL).
+- Login, registration and admin login use the same orange/teal/navy/pastel visual system.
+- Existing Supabase authentication and admin approval logic is unchanged.
