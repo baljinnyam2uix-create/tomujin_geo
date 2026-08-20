@@ -31,3 +31,9 @@
 - Homepage hero, course cards and map explorer now use geography / earth-science imagery, coordinates, map pins, compass, GIS and topographic motifs.
 - Login, registration, student, teacher and admin screens use the same Tomujin visual system.
 - Existing authentication, Supabase, role, grading and LMS JavaScript logic remains unchanged.
+
+
+## v2 design fixes
+- School logo moved to the upper-left.
+- Logo uses portable relative asset paths (`assets/tomujin-logo.jpg` / `../assets/tomujin-logo.jpg`).
+- All Mongolian “Газрын зураг” wording changed to “Газарзүйн зураг”.
