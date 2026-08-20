@@ -23,3 +23,11 @@
 - Reference artwork is bundled locally in `assets/geography-hero-art.webp` (no expiring external URL).
 - Login, registration and admin login use the same orange/teal/navy/pastel visual system.
 - Existing Supabase authentication and admin approval logic is unchanged.
+
+
+## v10 Tomujin geography redesign
+- Header brand moved to the upper-right with the supplied Tomujin logo and “Tomujin alternative school” text.
+- Primary UI palette is derived from the logo: teal, purple, yellow and orange.
+- Homepage hero, course cards and map explorer now use geography / earth-science imagery, coordinates, map pins, compass, GIS and topographic motifs.
+- Login, registration, student, teacher and admin screens use the same Tomujin visual system.
+- Existing authentication, Supabase, role, grading and LMS JavaScript logic remains unchanged.
