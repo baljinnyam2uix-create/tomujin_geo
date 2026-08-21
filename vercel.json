@@ -1,4 +1,9 @@
 {
-  "$schema": "https://openapi.vercel.sh/vercel.json",
-  "cleanUrls": true
+  "rewrites": [
+    { "source": "/auth", "destination": "/auth/index.html" },
+    { "source": "/teacher", "destination": "/teacher/index.html" },
+    { "source": "/student", "destination": "/student/index.html" },
+    { "source": "/admin", "destination": "/admin/index.html" },
+    { "source": "/student-auth", "destination": "/auth/index.html" }
+  ]
 }
