@@ -27,7 +27,7 @@ if(GeoBackend.mode==='demo') $('#demoNote').classList.remove('hidden');
 (async()=>{ try { const { profile } = await GeoBackend.getSession(); if(profile?.status==='active') return redirectByRole(profile); if(profile?.status){ await GeoBackend.signOut(); if(profile.status==='pending') message('Таны бүртгэл админы баталгаажуулалт хүлээж байна. Батлагдсаны дараа нэвтэрнэ үү.','success'); } } catch{} })();
 
 $('#loginForm').addEventListener('submit', async e => {
-  e.preventDefault(); clearMessage(); const btn=e.submitter||e.target.querySelector('[type="submit"]'); btn.disabled=true; btn.textContent='Нэвтэрч байна...';
+  e.preventDefault(); clearMessage(); const btn=e.submitter; btn.disabled=true; btn.textContent='Нэвтэрч байна...';
   try { const { profile } = await GeoBackend.signIn($('#loginEmail').value.trim(), $('#loginPassword').value); if(profile?.role==='admin'){ await GeoBackend.signOut(); throw new Error('Админ хэрэглэгч /admin хаягаар нэвтэрнэ үү.'); } redirectByRole(profile); }
   catch(err){ message(err.message || 'Нэвтрэхэд алдаа гарлаа.'); btn.disabled=false; btn.textContent='Нэвтрэх →'; }
 });
@@ -35,7 +35,7 @@ $('#loginForm').addEventListener('submit', async e => {
 $('#registerForm').addEventListener('submit', async e => {
   e.preventDefault(); clearMessage();
   if($('#regPassword').value !== $('#regPassword2').value) return message('Нууц үгнүүд таарахгүй байна.');
-  const role=$('#regRole').value, btn=e.submitter||e.target.querySelector('[type="submit"]'); btn.disabled=true; btn.textContent='Бүртгэж байна...';
+  const role=$('#regRole').value, btn=e.submitter; btn.disabled=true; btn.textContent='Бүртгэж байна...';
   try {
     const result = await GeoBackend.signUpUnified({ role, email:$('#regEmail').value.trim(), password:$('#regPassword').value, fullName:$('#regName').value.trim(), school:$('#regSchool').value.trim(), subject:$('#regSubject').value.trim()||'Газарзүй', grade:$('#regGrade').value });
     const confirmText = result.needsEmailConfirmation ? ' И-мэйлээр ирсэн баталгаажуулах холбоосыг мөн нээнэ үү.' : '';
