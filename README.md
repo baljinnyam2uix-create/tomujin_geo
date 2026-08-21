@@ -35,10 +35,5 @@
 
 ## v2 design fixes
 - School logo moved to the upper-left.
-- The Tomujin header/sidebar logo is embedded directly in the HTML as a JPEG data URI, so it does not depend on relative asset paths and will render reliably on root pages, nested routes, Netlify, localhost, and file previews.
-- All Mongolian “Газарзүйн зураг” wording changed to “Газарзүйн зураг”.
-
-
-### Logo reliability fix
-- The Tomujin logo is embedded directly into each page as a `data:image/jpeg;base64,...` source.
-- `assets/tomujin-logo.jpg` is retained as the original source asset for future design edits.
+- Logo uses portable relative asset paths (`assets/tomujin-logo.jpg` / `../assets/tomujin-logo.jpg`).
+- All Mongolian “Газрын зураг” wording changed to “Газарзүйн зураг”.
