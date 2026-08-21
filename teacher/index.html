@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Багшийн самбар | Tomujin Geography LMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="logo" href="/"><span class="brand-dot"><img src="../assets/tomujin-logo.png" alt="Tomujin alternative school logo"></span><div><b>Tomujin</b><small>БАГШ · ГАЗАРЗҮЙ</small></div></a>
+    <nav class="side-nav">
+      <button class="nav-tab active" data-tab="overview">🏠 <span class="nav-label">Хяналтын самбар</span></button>
+      <button class="nav-tab" data-tab="lessons">🎬 <span class="nav-label">Хичээлүүд</span></button>
+      <button class="nav-tab" data-tab="assignments">📝 <span class="nav-label">Даалгавар</span></button>
+      <button class="nav-tab" data-tab="exams">📊 <span class="nav-label">Шалгалт</span></button>
+      <button class="nav-tab" data-tab="gradebook">🎯 <span class="nav-label">Дүн ба ахиц</span></button>
+      <a href="/" target="_blank">🌐 <span class="nav-label">Нүүр хуудас</span></a>
+    </nav>
+    <div class="sidebar-bottom"><div class="user-mini"><b id="sideName">Багш</b><small id="sideEmail">...</small></div><button class="logout-btn" id="logoutBtn">↪ <span>Гарах</span></button></div>
+  </aside>
+  <section class="main-panel">
+    <header class="topbar"><h1 id="topTitle">Хяналтын самбар</h1><div class="topbar-actions"><span id="backendBadge" class="mode-badge">DEMO</span><button class="btn btn-primary" id="newContentBtn">＋ Агуулга нэмэх</button></div></header>
+    <main class="content-area">
+      <section class="tab-page active" id="tab-overview">
+        <div class="welcome"><div><h2>Сайн байна уу, <span id="welcomeName">багш</span> 👋</h2><p>Хичээл, даалгавар, шалгалт, сурагчийн ахиц ба дүнгээ эндээс удирдана.</p></div></div>
+        <div id="demoNotice" class="notice hidden"><b>Demo горим.</b> Өгөгдөл зөвхөн энэ браузерт хадгалагдана. Supabase холбоход бүх төхөөрөмжөөс ижил мэдээлэл харагдана.</div>
+        <div class="stats-cards"><div class="stat"><span>🎬</span><strong id="lessonCount">0</strong><small>Хичээл</small></div><div class="stat"><span>📝</span><strong id="assignmentCount">0</strong><small>Даалгавар</small></div><div class="stat"><span>📊</span><strong id="examCount">0</strong><small>Шалгалт</small></div><div class="stat"><span>🎓</span><strong id="studentCountTeacher">0</strong><small>Сурагч</small></div></div>
+        <div class="panel"><div class="panel-head"><h3>Сүүлд нэмсэн агуулга</h3><button class="btn btn-soft" data-tab-jump="gradebook">Дүн ба ахиц →</button></div><div id="recentContent"></div></div>
+      </section>
+
+      <section class="tab-page" id="tab-lessons"><div class="panel"><div class="panel-head"><h3>🎬 Хичээлүүд</h3><div class="filters"><input class="content-search" data-type="lesson" placeholder="Хайх..."><select class="grade-filter" data-type="lesson"><option value="">Бүх анги</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select><button class="btn btn-primary" data-new="lesson">＋ Хичээл</button></div></div><div id="lessonTable"></div></div></section>
+      <section class="tab-page" id="tab-assignments"><div class="panel"><div class="panel-head"><h3>📝 Даалгавар</h3><div class="filters"><input class="content-search" data-type="assignment" placeholder="Хайх..."><select class="grade-filter" data-type="assignment"><option value="">Бүх анги</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select><button class="btn btn-primary" data-new="assignment">＋ Даалгавар</button></div></div><div id="assignmentTable"></div></div></section>
+      <section class="tab-page" id="tab-exams"><div class="panel"><div class="panel-head"><h3>📊 Шалгалт</h3><div class="filters"><input class="content-search" data-type="exam" placeholder="Хайх..."><select class="grade-filter" data-type="exam"><option value="">Бүх анги</option><option>7</option><option>8</option><option>9</option><option>10</option><option>11</option><option>12</option></select><button class="btn btn-primary" data-new="exam">＋ Шалгалт</button></div></div><div id="examTable"></div></div></section>
+
+      <section class="tab-page" id="tab-gradebook">
+        <div class="panel gradebook-panel">
+          <div class="panel-head"><div><h3>🎯 Дүн, шалгалт ба сурагчийн ахиц</h3><p class="panel-sub">Хичээл үзсэн цаг, даалгавар/шалгалтын гүйцэтгэл, оноо болон үнэлгээний жинг нэг дор хянаж болно.</p></div><div class="filters"><select id="gradebookGrade"><option value="">Бүх анги</option><option value="7">7-р анги</option><option value="8">8-р анги</option><option value="9">9-р анги</option><option value="10">10-р анги</option><option value="11">11-р анги</option><option value="12">12-р анги</option></select><select id="assessmentFilter"><option value="">Бүх агуулга / үнэлгээ</option></select><button class="btn btn-soft" id="exportExcelBtn">⬇ Excel татах</button></div></div>
+          <div class="grade-summary" id="gradeWeightSummary"></div>
+          <div id="gradebookTable"></div>
+        </div>
+      </section>
+    </main>
+  </section>
+</div>
+
+<div class="modal-layer" id="contentModal">
+  <div class="dialog">
+    <div class="dialog-head"><h3 id="dialogTitle">Агуулга нэмэх</h3><button class="dialog-close" id="dialogClose">×</button></div>
+    <form id="contentForm">
+      <div class="dialog-body">
+        <input type="hidden" id="contentId"><input type="hidden" id="existingFilePath"><input type="hidden" id="existingFileName">
+        <div id="formError" class="error-box"></div>
+        <div class="form-grid">
+          <div class="field"><label>Төрөл</label><select id="contentType" required><option value="lesson">Хичээл</option><option value="assignment">Даалгавар</option><option value="exam">Шалгалт</option></select></div>
+          <div class="field"><label>Анги</label><select id="grade" required><option value="7">7-р анги</option><option value="8">8-р анги</option><option value="9">9-р анги</option><option value="10">10-р анги</option><option value="11">11-р анги</option><option value="12">12-р анги</option></select></div>
+          <div class="field full"><label>Гарчиг</label><input id="contentTitle" required maxlength="180" placeholder="Жишээ: Монгол орны уур амьсгал"></div>
+          <div class="field full"><label>Тайлбар</label><textarea id="description" placeholder="Сурагчдад харагдах товч тайлбар"></textarea></div>
+          <div class="field"><label>Хичээл / чиглэл</label><input id="subject" value="Газарзүй" required></div>
+          <div class="field"><label>Материалын төрөл</label><select id="resourceType" required><option value="video">Видео</option><option value="ppt">PowerPoint</option><option value="word">Word</option><option value="pdf">PDF</option><option value="link">Веб линк</option><option value="other">Бусад файл</option></select></div>
+          <div class="field full" id="fileField"><label>Файл</label><div class="file-box"><input id="resourceFile" type="file" accept="video/*,.ppt,.pptx,.doc,.docx,.pdf,.zip,.png,.jpg,.jpeg"><div class="file-help">Видео, PPT/PPTX, Word, PDF болон бусад сургалтын файл. Одоогийн файл: <span id="currentFile">байхгүй</span></div></div></div>
+          <div class="field full hidden" id="linkField"><label>Веб линк</label><input id="externalUrl" type="url" placeholder="https://..."></div>
+          <div class="field" id="dueField"><label>Хугацаа / дуусах огноо</label><input id="dueAt" type="datetime-local"></div>
+          <div class="field"><label>Нийтлэх төлөв</label><select id="published"><option value="true">Нийтлэх</option><option value="false">Ноорог хадгалах</option></select></div>
+          <div id="gradingFields" class="grading-fields full hidden">
+            <div class="field"><label>Дээд оноо</label><input id="maxScore" type="number" min="1" step="0.1" value="100"></div>
+            <div class="field"><label>Эцсийн дүнд эзлэх жин (%)</label><input id="gradeWeight" type="number" min="0" max="100" step="0.1" value="10"></div>
+            <div class="grading-help">Жишээ: Даалгавар 40%, шалгалт 60% гэж хуваарилж болно. Нийт жинг 100% болгохыг зөвлөж байна.</div>
+          </div>
+        </div>
+      </div>
+      <div class="dialog-foot"><button type="button" class="btn" id="cancelDialog">Цуцлах</button><button class="btn btn-primary" id="saveContentBtn" type="submit">Хадгалах</button></div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="/config.js"></script><script src="/backend.js"></script><script src="/teacher.js"></script>
+</body></html>

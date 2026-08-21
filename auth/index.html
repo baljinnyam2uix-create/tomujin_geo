@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>Нэвтрэх / Бүртгүүлэх | Tomujin alternative school</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800&family=Poppins:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body class="geo-auth-body">
+  <main class="auth-page geo-auth-page">
+    <section class="auth-side geo-auth-side">
+      <a class="geo-auth-brand" href="/"><img src="../assets/tomujin-logo.png" alt="Tomujin alternative school logo"><span><b>Tomujin</b><small>alternative school</small></span></a>
+      <div class="geo-auth-copy">
+        <span class="geo-auth-kicker">⌖ TOMUJIN · GEOGRAPHY LMS</span>
+        <h1><b>Сонирхолтой</b><em>Газарзүй</em></h1>
+        <p>Tomujin alternative school-ийн 7–12-р ангийн сурагч, багш нарт зориулсан газарзүйн зураг, интерактив хичээл, даалгавар, шалгалт болон AI багштай сургалтын орчин.</p>
+      </div>
+            <div class="geo-auth-mini"><span>🛡️</span><div><b>Админы баталгаажуулалт</b><small>Шинэ бүртгэл батлагдсаны дараа идэвхжинэ</small></div></div>
+    </section>
+
+    <section class="auth-main geo-auth-main">
+      <div class="auth-card auth-card-wide geo-auth-card">
+        <div class="geo-auth-card-head">
+          <a class="small-link" href="/">← Нүүр хуудас</a>
+          <span class="geo-auth-chip">TOMUJIN · GEOGRAPHY LMS</span>
+        </div>
+        <h2 id="authTitle">Нэвтрэх</h2>
+        <p id="authSubtitle">Бүртгэлтэй и-мэйл, нууц үгээ оруулна уу.</p>
+        <div class="mode-tabs"><button id="loginTab" class="active" type="button">Нэвтрэх</button><button id="registerTab" type="button">Бүртгүүлэх</button></div>
+        <div id="errorBox" class="error-box"></div><div id="successBox" class="success-box"></div>
+
+        <form id="loginForm">
+          <div class="field"><label>И-мэйл</label><input id="loginEmail" type="email" required placeholder="name@example.mn"></div>
+          <div class="field"><label>Нууц үг</label><input id="loginPassword" type="password" required minlength="6" placeholder="••••••••"></div>
+          <button class="btn btn-primary btn-block" type="submit">Нэвтрэх →</button>
+        </form>
+
+        <form id="registerForm" class="hidden">
+          <div class="field full">
+            <label>Та аль хэрэглэгч вэ?</label>
+            <div class="role-picker" id="rolePicker">
+              <button type="button" class="role-option active" data-role="student"><span>🎓</span><b>Сурагч</b><small>Хичээл, даалгавар, шалгалт, дүн, AI багш</small></button>
+              <button type="button" class="role-option" data-role="teacher"><span>👩‍🏫</span><b>Багш</b><small>Агуулга, дүн, сурагчийн ахиц, Excel тайлан</small></button>
+            </div>
+            <input type="hidden" id="regRole" value="student">
+          </div>
+          <div class="form-grid">
+            <div class="field full"><label>Овог, нэр</label><input id="regName" required placeholder="Овог нэр"></div>
+            <div class="field full"><label>Сургууль</label><input id="regSchool" required placeholder="Сургуулийн нэр"></div>
+            <div class="field" id="studentGradeField"><label>Анги</label><select id="regGrade"><option value="7">7-р анги</option><option value="8">8-р анги</option><option value="9">9-р анги</option><option value="10">10-р анги</option><option value="11">11-р анги</option><option value="12">12-р анги</option></select></div>
+            <div class="field hidden" id="teacherSubjectField"><label>Хичээл / чиглэл</label><input id="regSubject" value="Газарзүй"></div>
+            <div class="field full"><label>И-мэйл</label><input id="regEmail" type="email" required placeholder="name@example.mn"></div>
+            <div class="field"><label>Нууц үг</label><input id="regPassword" type="password" minlength="6" required placeholder="••••••••"></div>
+            <div class="field"><label>Нууц үг давтах</label><input id="regPassword2" type="password" minlength="6" required placeholder="••••••••"></div>
+          </div>
+          <div class="approval-flow"><div><span>1</span><b>Бүртгэл илгээх</b></div><i>→</i><div><span>2</span><b>Админ батлах</b></div><i>→</i><div><span>3</span><b>Нэвтрэх</b></div></div>
+          <button class="btn btn-primary btn-block" id="registerSubmit" type="submit">Сурагчаар бүртгүүлэх →</button>
+        </form>
+
+        <div id="demoNote" class="auth-note demo hidden"><b>Demo горим</b><br>Сурагч: student@demo.mn / student123<br>Багш: teacher@demo.mn / teacher123<br>Админ: <a class="small-link" href="/admin">/admin</a></div>
+        <div class="auth-note secure-note"><b>🛡️ Баталгаажуулалттай бүртгэл</b><br>Шинээр үүсгэсэн багш, сурагчийн эрх шууд идэвхжихгүй. Админ баталсны дараа нэвтэрнэ.</div>
+      </div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="/config.js"></script><script src="/backend.js"></script><script src="/auth.js"></script>
+</body>
+</html>

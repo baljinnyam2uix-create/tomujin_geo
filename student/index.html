@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="mn">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Сурагчийн самбар | Tomujin Geography LMS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="logo" href="/"><span class="brand-dot"><img src="../assets/tomujin-logo.png" alt="Tomujin alternative school logo"></span><div><b>Tomujin</b><small>СУРАГЧ · ГАЗАРЗҮЙ</small></div></a>
+    <nav class="side-nav">
+      <button class="nav-tab active" data-tab="overview">🏠 <span class="nav-label">Хяналтын самбар</span></button>
+      <button class="nav-tab" data-tab="lessons">🎬 <span class="nav-label">Хичээлүүд</span></button>
+      <button class="nav-tab" data-tab="assignments">📝 <span class="nav-label">Даалгавар</span></button>
+      <button class="nav-tab" data-tab="exams">📊 <span class="nav-label">Шалгалт</span></button>
+      <button class="nav-tab" data-tab="grades">🏅 <span class="nav-label">Миний дүн</span></button>
+      <button class="nav-tab" data-tab="ai">🤖 <span class="nav-label">AI чат багш</span></button>
+      <a href="/" target="_blank">🌐 <span class="nav-label">Нүүр хуудас</span></a>
+    </nav>
+    <div class="sidebar-bottom"><div class="user-mini"><b id="studentSideName">Сурагч</b><small id="studentSideEmail">...</small></div><button class="logout-btn" id="studentLogoutBtn">↪ <span>Гарах</span></button></div>
+  </aside>
+  <section class="main-panel">
+    <header class="topbar"><h1 id="studentTopTitle">Хяналтын самбар</h1><div class="topbar-actions"><span id="studentGradeBadge" class="pill green">7-р анги</span><span id="studentBackendBadge" class="mode-badge">DEMO</span></div></header>
+    <main class="content-area">
+      <section class="tab-page active" id="tab-overview">
+        <div class="welcome"><div><h2>Сайн байна уу, <span id="studentWelcomeName">сурагч</span> 👋</h2><p><span id="studentGradeText">7-р анги</span>-ийн хичээл, даалгавар, шалгалт, дүнгээ эндээс үзнэ.</p></div></div>
+        <div id="studentDemoNotice" class="notice hidden"><b>Demo горим.</b> Ахиц ба дүн зөвхөн энэ браузерт хадгалагдана. Supabase холбоход багштай бодит цагт мэдээлэл солилцоно.</div>
+        <div class="stats-cards"><div class="stat"><span>🎬</span><strong id="studentLessonCount">0</strong><small>Хичээл</small></div><div class="stat"><span>📝</span><strong id="studentAssignmentCount">0</strong><small>Даалгавар</small></div><div class="stat"><span>📊</span><strong id="studentExamCount">0</strong><small>Шалгалт</small></div><div class="stat"><span>🏅</span><strong id="studentFinalGrade">0%</strong><small>Нийт дүн</small></div></div>
+        <div class="panel"><div class="panel-head"><h3>Шинээр нэмэгдсэн материал</h3><button class="btn btn-soft" data-tab-jump="grades">Миний дүн →</button></div><div id="studentRecent"></div></div>
+      </section>
+      <section class="tab-page" id="tab-lessons"><div class="panel"><div class="panel-head"><h3>🎬 Миний хичээлүүд</h3><div class="filters"><input class="student-search" data-type="lesson" placeholder="Хайх..."></div></div><div id="studentLessonTable"></div></div></section>
+      <section class="tab-page" id="tab-assignments"><div class="panel"><div class="panel-head"><h3>📝 Миний даалгавар</h3><div class="filters"><input class="student-search" data-type="assignment" placeholder="Хайх..."></div></div><div id="studentAssignmentTable"></div></div></section>
+      <section class="tab-page" id="tab-exams"><div class="panel"><div class="panel-head"><h3>📊 Миний шалгалт</h3><div class="filters"><input class="student-search" data-type="exam" placeholder="Хайх..."></div></div><div id="studentExamTable"></div></div></section>
+      <section class="tab-page" id="tab-grades"><div class="panel"><div class="panel-head"><div><h3>🏅 Миний дүн</h3><p class="panel-sub">Багшийн оруулсан даалгавар, шалгалтын оноо, жин, тайлбарыг харна.</p></div></div><div id="studentGradesTable"></div></div></section>
+      <section class="tab-page" id="tab-ai">
+        <div class="ai-layout">
+          <div class="panel ai-panel">
+            <div class="panel-head"><div><h3>🤖 AI чат багш</h3><p class="panel-sub">Газарзүйн ойлголт, хичээлийн асуулт, даалгаврын санааг тайлбарлуулж болно.</p></div><span class="pill purple">AI</span></div>
+            <div class="ai-chat" id="aiChat"><div class="ai-message assistant"><b>AI багш</b><p>Сайн байна уу! Газарзүйн хичээлийн юуг тайлбарлуулах вэ? Би шууд хариу хэлэхээс гадна ойлгоход туслах алхам, жишээгээр тайлбарлана.</p></div></div>
+            <form class="ai-composer" id="aiForm"><textarea id="aiInput" rows="2" maxlength="2000" placeholder="Жишээ: Циклон ба антициклон ямар ялгаатай вэ?"></textarea><button class="btn btn-primary" id="aiSendBtn" type="submit">Илгээх →</button></form>
+            <div class="ai-footnote" id="aiStatus">AI зөвлөгөө алдаа гаргаж болох тул чухал мэдээллийг багш, сурах бичгээс давхар шалгаарай.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </section>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/config.js"></script><script src="/backend.js"></script><script src="/student.js"></script>
+</body></html>
