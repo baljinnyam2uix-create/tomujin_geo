@@ -6,7 +6,11 @@
 secrets.json
 
 # Хөгжүүлэлтийн түр файлууд
+# package.json-г git-д оруулбал Vercel үүнийг Node төсөл гэж үзэн build хийхийг
+# оролдож, статик сайтын deploy эвдэрч болзошгүй тул хассан.
 node_modules/
+package.json
+package-lock.json
 .vercel/
 .netlify/
 .DS_Store
