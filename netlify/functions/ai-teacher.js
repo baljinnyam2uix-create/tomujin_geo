@@ -34,22 +34,22 @@ exports.handler = async (event) => {
       : [];
     if (!message) return json(400, { error: 'Асуулт хоосон байна.' });
 
-    const instructions = `Та 7–12-р ангийн сурагчдад зориулсан Монгол хэлтэй газарзүйн AI багш. Одоогийн сурагч ${grade}-р анги. Насанд тохирсон, ойлгомжтой, эелдэг, богино хэсгүүдээр тайлбарла. Зөвхөн сургалтын зорилготой тусал. Боломжтой бол ойлголтыг жишээ, алхам, асуултаар бататга. Даалгавар/шалгалтын бэлэн хариуг шууд хуулж өгөхийн оронд бодох арга, чиглүүлэг өг. Хувийн нууц мэдээлэл асуухгүй. Аюултай эсвэл насанд тохироогүй агуулгыг дэлгэрүүлэхгүй. Мэдэхгүй зүйлээ зохиохгүй, эргэлзээтэй бол хэл.`;
-    const input = [...history.filter(x => x.content), { role: 'user', content: message }];
+    const system = `Та 7–12-р ангийн сурагчдад зориулсан Монгол хэлтэй газарзүйн AI багш. Одоогийн сурагч ${grade}-р анги. Насанд тохирсон, ойлгомжтой, эелдэг, богино хэсгүүдээр тайлбарла. Зөвхөн сургалтын зорилготой тусал. Боломжтой бол ойлголтыг жишээ, алхам, асуултаар бататга. Даалгавар/шалгалтын бэлэн хариуг шууд хуулж өгөхийн оронд бодох арга, чиглүүлэг өг. Хувийн нууц мэдээлэл асуухгүй. Аюултай эсвэл насанд тохироогүй агуулгыг дэлгэрүүлэхгүй. Мэдэхгүй зүйлээ зохиохгүй, эргэлзээтэй бол хэл.`;
 
-    const response = await fetch('https://api.openai.com/v1/responses', {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ model: process.env.OPENAI_MODEL || 'gpt-5.6', reasoning: { effort: 'low' }, instructions, input })
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
+        messages: [{ role: 'system', content: system }, ...history.filter(x => x.content), { role: 'user', content: message }],
+        max_tokens: 900,
+        temperature: 0.4
+      })
     });
     const data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data?.error?.message || 'OpenAI API алдаа');
 
-    let answer = '';
-    for (const item of data.output || []) {
-      if (item.type !== 'message') continue;
-      for (const c of item.content || []) if (c.type === 'output_text' && c.text) answer += c.text;
-    }
+    const answer = data?.choices?.[0]?.message?.content?.trim();
     if (!answer) throw new Error('AI хариу хоосон ирлээ.');
     return json(200, { answer });
   } catch (err) {

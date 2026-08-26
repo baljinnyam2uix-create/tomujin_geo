@@ -56,17 +56,29 @@ where email='YOUR_ADMIN_EMAIL@example.mn';
 
 ## 4. AI чат багш
 Frontend нь `/student` > **AI чат багш** хэсэгт бэлэн.
-API key browser руу оруулахгүй; `netlify/functions/ai-teacher.js` server function ашиглана.
+API key browser руу ХЭЗЭЭ Ч орохгүй; зөвхөн server function дээр байна:
+- Vercel — `api/ai-teacher.js`
+- Netlify — `netlify/functions/ai-teacher.js`
 
-Netlify дээр:
-1. Project > Site configuration > Environment variables нээнэ.
-2. `OPENAI_API_KEY` нэртэй environment variable үүсгээд API key оруулна.
-3. `SUPABASE_URL` = өөрийн Supabase Project URL.
-4. `SUPABASE_ANON_KEY` (эсвэл `SUPABASE_PUBLISHABLE_KEY`) = browser талд ашиглаж буй Supabase public key.
-5. Сонголтоор `OPENAI_MODEL` = `gpt-5.6` тохируулж болно.
-6. Functions build хийхийн тулд энэ төслийг Git repository-оос Netlify-д холбоод deploy хийх нь хамгийн найдвартай. `netlify.toml` functions folder-ийг заасан.
+Frontend эхлээд `/api/ai-teacher`, олдохгүй бол `/.netlify/functions/ai-teacher` рүү хандана.
 
-AI function нь Supabase access token-оор нэвтэрсэн идэвхтэй **сурагч** мөн эсэхийг шалгана. OpenAI руу сурагчийн нэр, и-мэйл илгээхгүй; зөвхөн ангийн түвшин, асуулт, богино chat history ашиглана.
+### Vercel дээр тохируулах
+1. Vercel > төслөө сонгох > **Settings** > **Environment variables**.
+2. Дараах 3 хувьсагчийг нэмнэ (Production, Preview, Development бүгдэд нь):
+
+| Нэр | Утга |
+|---|---|
+| `OPENAI_API_KEY` | platform.openai.com-оос авсан API key |
+| `SUPABASE_URL` | Supabase Project URL |
+| `SUPABASE_ANON_KEY` | `config.js` дотор байгаа publishable/anon key |
+
+3. Сонголтоор `OPENAI_MODEL` (анхдагч нь `gpt-4o-mini`).
+4. **Deployments** > сүүлийн deploy > **Redeploy** дарна. Environment variable нэмсний дараа заавал дахин deploy хийх шаардлагатай.
+
+> `OPENAI_API_KEY` нь төлбөртэй. platform.openai.com > Billing дээр карт холбож, хэрэглээний хязгаар (usage limit) тавихыг зөвлөж байна.
+
+AI function нь Supabase access token-оор нэвтэрсэн идэвхтэй **сурагч** мөн эсэхийг шалгана (багш, админ хандах эрхгүй). OpenAI руу сурагчийн нэр, и-мэйл илгээхгүй; зөвхөн ангийн түвшин, асуулт, богино chat history ашиглана.
+
 Сурагчдад зориулсан AI учраас production ашиглалтад насанд тохирсон disclosure, content filtering, monitoring/reporting болон хэрэглэж буй улсын хүүхэд хамгаалал/нууцлалын шаардлагыг тусад нь хэрэгжүүлэх шаардлагатай.
 
 ## 5. Route-ууд

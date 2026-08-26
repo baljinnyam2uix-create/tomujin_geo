@@ -29,11 +29,24 @@ $$('.student-search').forEach(el=>el.addEventListener('input',renderStudent));
 async function loadStudent(){[studentItems,studentProgress]=await Promise.all([GeoBackend.listStudentContent(studentSession.profile.grade),GeoBackend.listStudentProgress()]);renderStudent()}
 $('#studentLogoutBtn').onclick=async()=>{await GeoBackend.signOut();location.href='/auth'};
 
+// Vercel дээр /api/..., Netlify дээр /.netlify/functions/... — аль нь байгааг нь ашиглана.
+const AI_ENDPOINTS=['/api/ai-teacher','/.netlify/functions/ai-teacher'];
+async function askAiTeacher(payload,token){
+  let missing=null;
+  for(const url of AI_ENDPOINTS){
+    const res=await fetch(url,{method:'POST',headers:{'Content-Type':'application/json',Authorization:`Bearer ${token}`},body:JSON.stringify(payload)});
+    if(res.status===404){missing=new Error('AI үйлчилгээ сервер дээр олдсонгүй. SETUP.md-ийн “AI чат багш” хэсгийг шалгана уу.');continue}
+    const data=await res.json().catch(()=>({}));
+    if(!res.ok)throw new Error(data.error||'AI үйлчилгээ одоогоор холбогдоогүй байна.');
+    return data;
+  }
+  throw missing;
+}
 function addAiMessage(role,text){const div=document.createElement('div');div.className=`ai-message ${role}`;div.innerHTML=`<b>${role==='assistant'?'AI багш':'Та'}</b><p>${esc(text).replace(/\n/g,'<br>')}</p>`;$('#aiChat').appendChild(div);$('#aiChat').scrollTop=$('#aiChat').scrollHeight}
 $('#aiForm').addEventListener('submit',async e=>{e.preventDefault();const input=$('#aiInput'),text=input.value.trim();if(!text)return;addAiMessage('user',text);aiHistory.push({role:'user',content:text});input.value='';const btn=$('#aiSendBtn');btn.disabled=true;btn.textContent='Бодож байна...';$('#aiStatus').textContent='AI багш хариулж байна...';try{
-  if(GeoBackend.mode==='demo')throw new Error('AI чатны интерфэйс бэлэн байна. Жинхэнэ AI хариулт авахын тулд эхлээд Supabase болон Netlify AI function-ийг холбоно уу.');
+  if(GeoBackend.mode==='demo')throw new Error('AI чатны интерфэйс бэлэн байна. Жинхэнэ AI хариулт авахын тулд Supabase холбож, серверт OPENAI_API_KEY тохируулна уу.');
   const {data:{session:sbSession}}=await GeoBackend.client.auth.getSession();const token=sbSession?.access_token;if(!token)throw new Error('AI багш ашиглахын тулд дахин нэвтэрнэ үү.');
-  const res=await fetch('/.netlify/functions/ai-teacher',{method:'POST',headers:{'Content-Type':'application/json','Authorization':`Bearer ${token}`},body:JSON.stringify({message:text,history:aiHistory.slice(0,-1).slice(-8)})});const data=await res.json().catch(()=>({}));if(!res.ok)throw new Error(data.error||'AI үйлчилгээ одоогоор холбогдоогүй байна.');const answer=data.answer||'Хариу ирсэнгүй.';addAiMessage('assistant',answer);aiHistory.push({role:'assistant',content:answer});$('#aiStatus').textContent='AI зөвлөгөө алдаа гаргаж болох тул чухал мэдээллийг багш, сурах бичгээс давхар шалгаарай.'
+  const data=await askAiTeacher({message:text,history:aiHistory.slice(0,-1).slice(-8)},token);const answer=data.answer||'Хариу ирсэнгүй.';addAiMessage('assistant',answer);aiHistory.push({role:'assistant',content:answer});$('#aiStatus').textContent='AI зөвлөгөө алдаа гаргаж болох тул чухал мэдээллийг багш, сурах бичгээс давхар шалгаарай.'
 }catch(err){addAiMessage('assistant',err.message||'AI холболтын тохиргоог SETUP.md файлаас шалгана уу.');$('#aiStatus').textContent='AI холболтын тохиргоог SETUP.md файлаас харна уу.'}finally{btn.disabled=false;btn.textContent='Илгээх →'}});
 
 (async()=>{try{studentSession=await GeoBackend.getSession();if(!studentSession.user||studentSession.profile?.role!=='student'||studentSession.profile?.status!=='active'){if(studentSession.user)await GeoBackend.signOut();location.href='/auth';return}const n=studentSession.profile.full_name||'Сурагч',g=studentSession.profile.grade||'7';$('#studentSideName').textContent=n;$('#studentSideEmail').textContent=studentSession.user.email;$('#studentWelcomeName').textContent=n.split(' ')[0];$('#studentGradeBadge').textContent=`${g}-р анги`;$('#studentGradeText').textContent=`${g}-р анги`;if(GeoBackend.mode==='demo')$('#studentDemoNotice').classList.remove('hidden');else{$('#studentBackendBadge').textContent='LIVE';$('#studentBackendBadge').classList.add('live')}await loadStudent()}catch(e){console.error(e);location.href='/auth'}})();
