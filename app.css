@@ -188,3 +188,21 @@ body{background:#F6F8FB;color:#1B2440}
 @media(max-width:1000px){.topbar-school span{display:none}.topbar-school{padding-left:8px}.topbar-school img{width:35px;height:35px}.sidebar .logo .brand-dot{width:42px;height:42px}}
 @media(max-width:820px){.geo-auth-main{padding-top:26px!important}}
 @media(max-width:680px){.topbar-school{display:none}.content-area{padding:18px}.welcome{padding:20px}.welcome:after{font-size:42px;right:14px}.geo-auth-corner-brand span{display:none}.geo-auth-corner-brand img{width:38px;height:38px}}
+
+/* Mobile: keep the logout control reachable in the bottom nav bar */
+@media(max-width:680px){
+  .sidebar{gap:6px}
+  .side-nav{width:auto;flex:1 1 auto;min-width:0;justify-content:space-between;gap:2px}
+  .side-nav button,.side-nav a{flex:1 1 0;min-width:0;padding:8px 2px;font-size:16px;overflow:hidden}
+  .sidebar-bottom{display:block;position:static;left:auto;right:auto;bottom:auto;flex:0 0 auto;margin:0}
+  .sidebar-bottom .user-mini{display:none}
+  .logout-btn{width:44px;height:44px;display:grid;place-items:center;padding:0;margin:0;border-radius:12px;font-size:17px;background:var(--tomujin-orange);color:#fff;border:1px solid rgba(255,255,255,.2);box-shadow:0 6px 14px rgba(240,90,40,.3)}
+  .logout-btn span{display:none}
+}
+
+/* Baseline (гарааны) assessment section */
+.baseline-panel{margin-bottom:18px;border-color:rgba(240,90,40,.28);box-shadow:0 10px 26px rgba(240,90,40,.08)}
+.baseline-panel .panel-head{background:linear-gradient(120deg,#FFF3EC,#FFFAF4)}
+.baseline-panel .panel-head h3{color:var(--tomujin-orange)}
+.baseline-panel .empty b{color:#9A4A28}
+.kind-pill{margin-left:6px}

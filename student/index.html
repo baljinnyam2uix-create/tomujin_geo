@@ -33,7 +33,13 @@
       </section>
       <section class="tab-page" id="tab-lessons"><div class="panel"><div class="panel-head"><h3>🎬 Миний хичээлүүд</h3><div class="filters"><input class="student-search" data-type="lesson" placeholder="Хайх..."></div></div><div id="studentLessonTable"></div></div></section>
       <section class="tab-page" id="tab-assignments"><div class="panel"><div class="panel-head"><h3>📝 Миний даалгавар</h3><div class="filters"><input class="student-search" data-type="assignment" placeholder="Хайх..."></div></div><div id="studentAssignmentTable"></div></div></section>
-      <section class="tab-page" id="tab-exams"><div class="panel"><div class="panel-head"><h3>📊 Миний шалгалт</h3><div class="filters"><input class="student-search" data-type="exam" placeholder="Хайх..."></div></div><div id="studentExamTable"></div></div></section>
+      <section class="tab-page" id="tab-exams">
+        <div class="panel baseline-panel">
+          <div class="panel-head"><div><h3>🚩 Гарааны үнэлгээ</h3><p class="panel-sub">Хичээлийн жилийн эхэнд суурь мэдлэгээ тогтоох үнэлгээ. Үүнийг эхэлж гүйцэтгээрэй.</p></div><span class="pill orange" id="baselineBadge">Эхлэл</span></div>
+          <div id="studentBaselineTable"></div>
+        </div>
+        <div class="panel exams-panel"><div class="panel-head"><div><h3>📊 Явцын ба эцсийн шалгалт</h3><p class="panel-sub">Хичээлийн явцад болон төгсгөлд өгөх шалгалтууд.</p></div><div class="filters"><input class="student-search" data-type="exam" placeholder="Хайх..."></div></div><div id="studentExamTable"></div></div>
+      </section>
       <section class="tab-page" id="tab-grades"><div class="panel"><div class="panel-head"><div><h3>🏅 Миний дүн</h3><p class="panel-sub">Багшийн оруулсан даалгавар, шалгалтын оноо, жин, тайлбарыг харна.</p></div></div><div id="studentGradesTable"></div></div></section>
       <section class="tab-page" id="tab-ai">
         <div class="ai-layout">
