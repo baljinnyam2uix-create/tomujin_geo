@@ -47,7 +47,38 @@ module.exports = async (req, res) => {
           .filter(x => x.content)
       : [];
 
-    const system = `Та 7–12-р ангийн сурагчдад зориулсан Монгол хэлтэй газарзүйн AI багш. Одоогийн сурагч ${grade}-р анги. Насанд тохирсон, ойлгомжтой, эелдэг, богино хэсгүүдээр тайлбарла. Зөвхөн сургалтын зорилготой тусал. Боломжтой бол ойлголтыг жишээ, алхам, асуултаар бататга. Даалгавар/шалгалтын бэлэн хариуг шууд хуулж өгөхийн оронд бодох арга, чиглүүлэг өг. Хувийн нууц мэдээлэл асуухгүй. Аюултай эсвэл насанд тохироогүй агуулгыг дэлгэрүүлэхгүй. Мэдэхгүй зүйлээ зохиохгүй, эргэлзээтэй бол хэл.`;
+    // 3.5. Сурах бичгээс холбогдох хэсгийг хайх (байхгүй бол ердийн горимоор үргэлжилнэ)
+    let textbook = '';
+    try {
+      const embRes = await fetch('https://api.openai.com/v1/embeddings', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ model: 'text-embedding-3-small', input: message })
+      });
+      const embData = await embRes.json();
+      if (embRes.ok && embData?.data?.[0]?.embedding) {
+        const matchRes = await fetch(`${base}/rest/v1/rpc/match_textbook_chunks`, {
+          method: 'POST',
+          headers: { apikey: supabaseKey, Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query_embedding: embData.data[0].embedding, max_grade: Number(grade) || 12, match_count: 5 })
+        });
+        const chunks = await matchRes.json().catch(() => []);
+        if (matchRes.ok && Array.isArray(chunks)) {
+          const useful = chunks.filter(c => c.similarity > 0.3);
+          if (useful.length) {
+            textbook = useful.map((c, i) => `[${i + 1}] ${c.grade}-р ангийн сурах бичиг:\n${c.content}`).join('\n\n');
+          }
+        }
+      }
+    } catch (e) {
+      console.error('textbook lookup failed', e.message); // хайлт бүтэхгүй бол зогсоохгүй
+    }
+
+    const system = `Та 7–12-р ангийн сурагчдад зориулсан Монгол хэлтэй газарзүйн AI багш. Одоогийн сурагч ${grade}-р анги. Насанд тохирсон, ойлгомжтой, эелдэг, богино хэсгүүдээр тайлбарла. Зөвхөн сургалтын зорилготой тусал. Боломжтой бол ойлголтыг жишээ, алхам, асуултаар бататга. Даалгавар/шалгалтын бэлэн хариуг шууд хуулж өгөхийн оронд бодох арга, чиглүүлэг өг. Хувийн нууц мэдээлэл асуухгүй. Аюултай эсвэл насанд тохироогүй агуулгыг дэлгэрүүлэхгүй. Мэдэхгүй зүйлээ зохиохгүй, эргэлзээтэй бол хэл.${
+      textbook
+        ? `\n\nДоор сурагчийн сурах бичгээс холбогдох хэсгүүдийг өгөв. Хариултаа ЭДГЭЭРТ ТУЛГУУРЛА, сурах бичгийн нэр томьёог ашигла. Хэрэв энд хариулт байхгүй бол сурах бичигт байхгүйг хэлээд ерөнхий мэдлэгээрээ болгоомжтой тайлбарла.\n\n=== СУРАХ БИЧГИЙН ХЭСЭГ ===\n${textbook}\n=== ТӨГСӨВ ===`
+        : ''
+    }`;
 
     // 4. OpenAI руу дуудах
     const aiRes = await fetch('https://api.openai.com/v1/chat/completions', {
