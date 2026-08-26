@@ -62,8 +62,14 @@ module.exports = async (req, res) => {
     });
     const data = await aiRes.json().catch(() => ({}));
     if (!aiRes.ok) {
-      console.error('OpenAI error', aiRes.status, data?.error);
-      return send(502, { error: data?.error?.message || 'OpenAI API алдаа гарлаа.' });
+      // Жинхэнэ алдааг зөвхөн лог руу; сурагчид ойлгомжтой мэдэгдэл харуулна.
+      const code = data?.error?.code || data?.error?.type || '';
+      console.error('OpenAI error', aiRes.status, code, data?.error?.message);
+      let msg = 'AI багш түр ажиллахгүй байна. Хэсэг хугацааны дараа дахин оролдоно уу.';
+      if (code === 'insufficient_quota') msg = 'AI багшийн ашиглалтын эрх дууссан байна. Сургуулийн админд мэдэгдэнэ үү.';
+      else if (aiRes.status === 429) msg = 'Хүсэлт хэт олон ирлээ. Хэдэн секунд хүлээгээд дахин оролдоно уу.';
+      else if (aiRes.status === 401 || aiRes.status === 403) msg = 'AI үйлчилгээний тохиргоо буруу байна. Сургуулийн админд мэдэгдэнэ үү.';
+      return send(502, { error: msg });
     }
 
     const answer = data?.choices?.[0]?.message?.content?.trim();

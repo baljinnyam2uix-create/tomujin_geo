@@ -47,7 +47,15 @@ exports.handler = async (event) => {
       })
     });
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data?.error?.message || 'OpenAI API алдаа');
+    if (!response.ok) {
+      const code = data?.error?.code || data?.error?.type || '';
+      console.error('OpenAI error', response.status, code, data?.error?.message);
+      let msg = 'AI багш түр ажиллахгүй байна. Хэсэг хугацааны дараа дахин оролдоно уу.';
+      if (code === 'insufficient_quota') msg = 'AI багшийн ашиглалтын эрх дууссан байна. Сургуулийн админд мэдэгдэнэ үү.';
+      else if (response.status === 429) msg = 'Хүсэлт хэт олон ирлээ. Хэдэн секунд хүлээгээд дахин оролдоно уу.';
+      else if (response.status === 401 || response.status === 403) msg = 'AI үйлчилгээний тохиргоо буруу байна. Сургуулийн админд мэдэгдэнэ үү.';
+      return json(502, { error: msg });
+    }
 
     const answer = data?.choices?.[0]?.message?.content?.trim();
     if (!answer) throw new Error('AI хариу хоосон ирлээ.');
