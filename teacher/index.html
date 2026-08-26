@@ -38,6 +38,23 @@
       <section class="tab-page" id="tab-gradebook">
         <div class="panel gradebook-panel">
           <div class="panel-head"><div><h3>🎯 Дүн, шалгалт ба сурагчийн ахиц</h3><p class="panel-sub">Хичээл үзсэн цаг, даалгавар/шалгалтын гүйцэтгэл, оноо болон үнэлгээний жинг нэг дор хянаж болно.</p></div><div class="filters"><select id="gradebookGrade"><option value="">Бүх анги</option><option value="7">7-р анги</option><option value="8">8-р анги</option><option value="9">9-р анги</option><option value="10">10-р анги</option><option value="11">11-р анги</option><option value="12">12-р анги</option></select><select id="assessmentFilter"><option value="">Бүх агуулга / үнэлгээ</option></select><button class="btn btn-soft" id="exportExcelBtn">⬇ Excel татах</button></div></div>
+          <div class="scheme-box" id="schemeBox">
+            <div class="scheme-head">
+              <div><b>⚖️ Дүнгийн бүтэц</b><small id="schemeScope">Анги сонгоно уу</small></div>
+              <div class="scheme-total">Нийт: <strong id="schemeTotal">100%</strong></div>
+            </div>
+            <div class="scheme-grid">
+              <label>Ирц<input type="number" id="wAttendance" min="0" max="100" step="1"><i>%</i></label>
+              <label>Явц<input type="number" id="wParticipation" min="0" max="100" step="1"><i>%</i></label>
+              <label>Явцын шалгалт<input type="number" id="wProgressExam" min="0" max="100" step="1"><i>%</i></label>
+              <label>Даалгавар<input type="number" id="wAssignment" min="0" max="100" step="1"><i>%</i></label>
+              <label>Эцсийн шалгалт<input type="number" id="wFinalExam" min="0" max="100" step="1"><i>%</i></label>
+            </div>
+            <div class="scheme-foot">
+              <span id="schemeMsg" class="scheme-msg"></span>
+              <div><button class="btn btn-soft" id="schemeResetBtn" type="button">Анхны утга</button><button class="btn btn-primary" id="schemeSaveBtn" type="button">Бүтэц хадгалах</button></div>
+            </div>
+          </div>
           <div class="grade-summary" id="gradeWeightSummary"></div>
           <div id="gradebookTable"></div>
         </div>
@@ -67,8 +84,7 @@
           <div class="field hidden" id="examKindField"><label>Үнэлгээний төрөл</label><select id="examKind"><option value="baseline">Гарааны үнэлгээ</option><option value="progress">Явцын үнэлгээ</option><option value="final">Эцсийн үнэлгээ</option></select></div>
           <div id="gradingFields" class="grading-fields full hidden">
             <div class="field"><label>Дээд оноо</label><input id="maxScore" type="number" min="1" step="0.1" value="100"></div>
-            <div class="field"><label>Эцсийн дүнд эзлэх жин (%)</label><input id="gradeWeight" type="number" min="0" max="100" step="0.1" value="10"></div>
-            <div class="grading-help">Жишээ: Даалгавар 40%, шалгалт 60% гэж хуваарилж болно. Нийт жинг 100% болгохыг зөвлөж байна.</div>
+            <div class="grading-help">Эцсийн дүнд эзлэх хувийг <b>Дүн ба ахиц → Дүнгийн бүтэц</b> хэсэгт ангиллаар нь (Ирц · Явц · Явцын шалгалт · Даалгавар · Эцсийн шалгалт) тохируулна. Ангилал доторх оноог нийт онооны харьцаагаар бодно.</div>
           </div>
         </div>
       </div>

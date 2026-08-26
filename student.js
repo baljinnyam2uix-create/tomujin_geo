@@ -1,5 +1,5 @@
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
-let studentSession=null,studentItems=[],studentProgress=[],aiHistory=[];
+let studentSession=null,studentItems=[],studentProgress=[],aiHistory=[],studentSchemes=[],studentCatScores=[];
 const typeLabel={lesson:'Хичээл',assignment:'Даалгавар',exam:'Шалгалт'},resourceLabel={video:'Видео',ppt:'PowerPoint',word:'Word',pdf:'PDF',link:'Линк',other:'Файл'};
 function esc(s=''){return String(s).replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
 function fmt(d,withTime=false){if(!d)return'—';try{return new Intl.DateTimeFormat('mn-MN',withTime?{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}:{year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date(d))}catch{return'—'}}
@@ -9,8 +9,54 @@ function progressFor(id){return studentProgress.find(p=>p.content_id===id)}
 function rowsHtml(rows,empty=null){if(!rows.length)return empty||'<div class="empty"><b>Одоогоор материал алга.</b>Багш энэ ангид материал нийтлэх үед энд харагдана.</div>';return`<div class="table-wrap"><table class="data-table"><thead><tr><th>Материал</th><th>Төрөл</th><th>Багш</th><th>Хугацаа</th><th>Төлөв</th><th>Үйлдэл</th></tr></thead><tbody>${rows.map(x=>{const p=progressFor(x.id),done=p?.status==='completed';return`<tr><td class="title-cell"><b>${esc(x.title)}</b><small>${esc(x.description||'Тайлбаргүй')}</small></td><td><span class="pill ${x.content_type==='lesson'?'green':x.content_type==='assignment'?'blue':'purple'}">${esc(typeLabel[x.content_type]||x.content_type)} · ${esc(resourceLabel[x.resource_type]||x.resource_type)}</span></td><td>${esc(x.teacher_name||'Багш')}</td><td>${x.due_at?fmt(x.due_at):'—'}</td><td><span class="pill ${done?'green':p?.opened_at?'blue':'orange'}">${done?'Гүйцэтгэсэн':p?.opened_at?'Үзэж эхэлсэн':'Хүлээгдэж байна'}</span></td><td><div class="actions"><button class="icon-action" data-student-open="${x.id}">Нээх</button><button class="icon-action" data-student-done="${x.id}">${done?'Буцаах':'✓ Гүйцэтгэсэн'}</button></div></td></tr>`}).join('')}</tbody></table></div>`}
 function filtered(type,extra=null){const q=$(`.student-search[data-type="${type}"]`)?.value.toLowerCase().trim()||'';return studentItems.filter(x=>x.content_type===type&&(!extra||extra(x))&&(!q||`${x.title} ${x.description} ${x.subject} ${x.teacher_name}`.toLowerCase().includes(q)))}
 function baselineItems(){return studentItems.filter(x=>x.content_type==='exam'&&x.exam_kind==='baseline')}
-function gradeData(){const assessments=studentItems.filter(x=>['assignment','exam'].includes(x.content_type));let final=0,totalW=0;const rows=assessments.map(x=>{const p=progressFor(x.id),max=Number(x.max_score||0),w=Number(x.grade_weight||0),score=p?.score;totalW+=w;if(score!=null&&max>0)final+=(Number(score)/max)*w;return{x,p,max,w,score,contribution:score!=null&&max>0?(Number(score)/max)*w:0}});return{rows,final,totalW}}
-function gradesHtml(){const {rows,final,totalW}=gradeData();if(!rows.length)return'<div class="empty"><b>Үнэлгээ хараахан алга.</b>Багш даалгавар, шалгалтын дүнгийн тохиргоо оруулах үед энд харагдана.</div>';return`<div class="grade-summary student-grade-summary"><div><b>Одоогийн нийт дүн</b><span><strong>${final.toFixed(1)}%</strong> / тохируулсан ${totalW}% жин</span></div></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Үнэлгээ</th><th>Төрөл</th><th>Оноо</th><th>Жин</th><th>Дүнд нэмэгдэх</th><th>Багшийн тайлбар</th></tr></thead><tbody>${rows.map(r=>`<tr><td class="title-cell"><b>${esc(r.x.title)}</b><small>${esc(r.x.teacher_name||'Багш')}</small></td><td><span class="pill ${r.x.content_type==='assignment'?'blue':'purple'}">${typeLabel[r.x.content_type]}</span></td><td>${r.score==null?'—':`${Number(r.score)} / ${r.max}`}</td><td>${r.w}%</td><td>${r.score==null?'—':`${r.contribution.toFixed(1)}%`}</td><td>${esc(r.p?.teacher_feedback||'—')}</td></tr>`).join('')}</tbody></table></div>`}
+// ---- Дүнгийн бүтэц (багшийн тохируулсан жингээр) ----
+const CAT_LABEL={attendance:'Ирц',participation:'Явц',progress_exam:'Явцын шалгалт',assignment:'Даалгавар',final_exam:'Эцсийн шалгалт'};
+const CAT_KEYS=['attendance','participation','progress_exam','assignment','final_exam'];
+const MANUAL_CATS=['attendance','participation'];
+function categoryOf(x){
+  if(x.content_type==='assignment')return 'assignment';
+  if(x.content_type==='exam')return x.exam_kind==='final'?'final_exam':x.exam_kind==='baseline'?null:'progress_exam';
+  return null;
+}
+function studentScheme(){
+  const base=GeoBackend.DEFAULT_SCHEME,g=String(studentSession?.profile?.grade||'7');
+  const matching=studentSchemes.filter(x=>String(x.grade)===g);
+  if(!matching.length)return{...base};
+  const counts={};studentItems.forEach(x=>{counts[x.owner_id]=(counts[x.owner_id]||0)+1});
+  matching.sort((a,b)=>(counts[b.owner_id]||0)-(counts[a.owner_id]||0));
+  const r=matching[0],out={};
+  CAT_KEYS.forEach(k=>{const n=Number(r[k]);out[k]=Number.isFinite(n)?n:base[k]});
+  return out;
+}
+function gradeData(){
+  const scheme=studentScheme();
+  const cats=CAT_KEYS.map(k=>{
+    const weight=Number(scheme[k]||0);let pct=null,detail='';
+    if(MANUAL_CATS.includes(k)){
+      const r=studentCatScores.find(x=>x.category===k);
+      pct=r&&r.score!=null?Number(r.score):null;
+      detail=pct==null?'Багш хараахан оруулаагүй':'Багшийн үнэлгээ';
+    }else{
+      const rel=studentItems.filter(x=>categoryOf(x)===k);
+      let earned=0,possible=0,n=0;
+      rel.forEach(x=>{const p=progressFor(x.id),max=Number(x.max_score||0);if(max>0&&p?.score!=null){earned+=Number(p.score);possible+=max;n++}});
+      if(possible>0)pct=(earned/possible)*100;
+      detail=rel.length?`${n} / ${rel.length} үнэлэгдсэн`:'Материал алга';
+    }
+    return{key:k,label:CAT_LABEL[k],weight,pct,detail,contribution:pct==null?0:pct*weight/100};
+  });
+  const final=cats.reduce((n,c)=>n+c.contribution,0);
+  const counted=cats.reduce((n,c)=>n+(c.pct==null?0:c.weight),0);
+  return{cats,final,counted,scheme};
+}
+function gradesHtml(){
+  const{cats,final,counted}=gradeData();
+  const items=studentItems.filter(x=>categoryOf(x));
+  const catRows=cats.map(c=>`<tr><td class="title-cell"><b>${c.label}</b><small>${esc(c.detail)}</small></td><td><b>${c.weight}%</b></td><td>${c.pct==null?'<span class="muted">—</span>':`${c.pct.toFixed(1)}%`}</td><td>${c.pct==null?'<span class="muted">—</span>':`${c.contribution.toFixed(1)}%`}</td></tr>`).join('');
+  const detail=items.length?`<div class="panel-head sub-head"><h3>Үнэлгээ тус бүрээр</h3></div><div class="table-wrap"><table class="data-table"><thead><tr><th>Үнэлгээ</th><th>Ангилал</th><th>Оноо</th><th>Багшийн тайлбар</th></tr></thead><tbody>${items.map(x=>{const p=progressFor(x.id),max=Number(x.max_score||0);return`<tr><td class="title-cell"><b>${esc(x.title)}</b><small>${esc(x.teacher_name||'Багш')}</small></td><td><span class="pill ${x.content_type==='assignment'?'blue':'purple'}">${esc(CAT_LABEL[categoryOf(x)])}</span></td><td>${p?.score==null?'—':`${Number(p.score)} / ${max}`}</td><td>${esc(p?.teacher_feedback||'—')}</td></tr>`}).join('')}</tbody></table></div>`:'';
+  return`<div class="grade-summary student-grade-summary"><div><b>Одоогийн нийт дүн</b><span><strong>${final.toFixed(1)}%</strong> / одоогоор боломжит ${counted}%</span></div><span class="muted">Гарааны үнэлгээ эцсийн дүнд ороогүй</span></div>
+  <div class="table-wrap"><table class="data-table"><thead><tr><th>Ангилал</th><th>Жин</th><th>Гүйцэтгэл</th><th>Дүнд нэмэгдэх</th></tr></thead><tbody>${catRows}</tbody></table></div>${detail}`;
+}
 function renderStudent(){const {final}=gradeData();$('#studentLessonCount').textContent=studentItems.filter(x=>x.content_type==='lesson').length;$('#studentAssignmentCount').textContent=studentItems.filter(x=>x.content_type==='assignment').length;$('#studentExamCount').textContent=studentItems.filter(x=>x.content_type==='exam').length;$('#studentFinalGrade').textContent=`${final.toFixed(1)}%`;$('#studentRecent').innerHTML=rowsHtml(studentItems.slice(0,5));$('#studentLessonTable').innerHTML=rowsHtml(filtered('lesson'));$('#studentAssignmentTable').innerHTML=rowsHtml(filtered('assignment'));$('#studentExamTable').innerHTML=rowsHtml(filtered('exam',x=>x.exam_kind!=='baseline'));renderBaseline();$('#studentGradesTable').innerHTML=gradesHtml();bindStudentActions()}
 function renderBaseline(){
   const list=baselineItems(),box=$('#studentBaselineTable'),badge=$('#baselineBadge');
@@ -26,7 +72,7 @@ function bindStudentActions(){
   $$('[data-student-done]').forEach(b=>b.onclick=async()=>{const x=studentItems.find(i=>i.id===b.dataset.studentDone),p=progressFor(x.id);try{await GeoBackend.setStudentProgress(x.id,p?.status==='completed'?'pending':'completed');await loadStudent()}catch(e){alert(e.message)}});
 }
 $$('.student-search').forEach(el=>el.addEventListener('input',renderStudent));
-async function loadStudent(){[studentItems,studentProgress]=await Promise.all([GeoBackend.listStudentContent(studentSession.profile.grade),GeoBackend.listStudentProgress()]);renderStudent()}
+async function loadStudent(){[studentItems,studentProgress,studentSchemes,studentCatScores]=await Promise.all([GeoBackend.listStudentContent(studentSession.profile.grade),GeoBackend.listStudentProgress(),GeoBackend.listGradeSchemes(),GeoBackend.listCategoryScores({studentId:studentSession.user.id})]);renderStudent()}
 $('#studentLogoutBtn').onclick=async()=>{await GeoBackend.signOut();location.href='/auth'};
 
 // Vercel дээр /api/..., Netlify дээр /.netlify/functions/... — аль нь байгааг нь ашиглана.

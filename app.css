@@ -215,3 +215,25 @@ body{background:#F6F8FB;color:#1B2440}
 .baseline-panel .panel-head h3{color:var(--tomujin-orange)}
 .baseline-panel .empty b{color:#9A4A28}
 .kind-pill{margin-left:6px}
+
+/* Дүнгийн бүтэц (жингийн тохиргоо) */
+.scheme-box{padding:16px 20px;border-bottom:1px solid var(--line);background:linear-gradient(120deg,#F7F5FF,#FFFDF6)}
+.scheme-box.scheme-disabled{opacity:.62}
+.scheme-head{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+.scheme-head b{font-family:Montserrat,Inter,sans-serif;font-size:14px;color:var(--tomujin-purple-deep)}
+.scheme-head small{display:block;margin-top:3px;font-size:11px;color:var(--muted)}
+.scheme-total{font-size:12px;color:var(--muted)}.scheme-total strong{font-size:15px;margin-left:4px}
+.scheme-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin:14px 0 12px}
+.scheme-grid label{position:relative;display:flex;flex-direction:column;gap:6px;font-size:11px;font-weight:700;color:#405168;min-width:0}
+.scheme-grid input{width:100%;min-width:0;border:1px solid #DFE4EF;border-radius:10px;padding:9px 26px 9px 10px;background:#fff;font-size:13px;font-weight:700;color:var(--tomujin-purple-deep);outline:none}
+.scheme-grid input:focus{border-color:var(--tomujin-teal);box-shadow:0 0 0 3px rgba(34,184,197,.12)}
+.scheme-grid input:disabled{background:#F4F4F8;color:#9AA0AE}
+.scheme-grid i{position:absolute;right:10px;bottom:10px;font-style:normal;font-size:11px;color:#98A0B0}
+.scheme-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.scheme-foot>div{display:flex;gap:8px}
+.scheme-msg{font-size:11px}.scheme-msg.ok{color:var(--tomujin-teal-deep)}.scheme-msg.bad{color:#C0392B}
+.counted-hint{display:block;margin-top:4px;font-size:9px;color:var(--muted)}
+.cat-input{max-width:96px}
+.sub-head{border-top:1px solid var(--line);margin-top:4px}
+@media(max-width:900px){.scheme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.scheme-grid{grid-template-columns:1fr}.scheme-foot{align-items:stretch;flex-direction:column}.scheme-foot>div .btn{flex:1}}

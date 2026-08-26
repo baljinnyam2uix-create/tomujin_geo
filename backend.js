@@ -2,7 +2,8 @@
   const cfg = window.GEO_CONFIG || {};
   const configured = Boolean(cfg.supabaseUrl && cfg.supabaseAnonKey && !cfg.supabaseUrl.includes('YOUR_SUPABASE') && !cfg.supabaseAnonKey.includes('YOUR_SUPABASE') && window.supabase?.createClient);
   const client = configured ? window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseAnonKey) : null;
-  const K={users:'geo_demo_users_v4',session:'geo_demo_session_v4',content:'geo_demo_content_v4',settings:'geo_demo_settings_v4',progress:'geo_demo_progress_v4'};
+  const K={users:'geo_demo_users_v4',session:'geo_demo_session_v4',content:'geo_demo_content_v4',settings:'geo_demo_settings_v4',progress:'geo_demo_progress_v4',schemes:'geo_demo_schemes_v1',catscores:'geo_demo_catscores_v1'};
+  const DEFAULT_SCHEME={attendance:10,participation:20,progress_exam:20,assignment:20,final_exam:30};
   const now=()=>new Date().toISOString();
   const makeId=()=>crypto.randomUUID?crypto.randomUUID():`${Date.now()}-${Math.random().toString(16).slice(2)}`;
   const read=(k,f)=>{try{return JSON.parse(localStorage.getItem(k))??f}catch{return f}};
@@ -74,8 +75,56 @@
     const{data:existing,error:selErr}=await client.from('student_progress').select('*').eq('student_id',studentId).eq('content_id',contentId).maybeSingle();if(selErr)throw selErr;const payload={score:score===''||score==null?null:Number(score),teacher_feedback:feedback};if(existing){const{data,error}=await client.from('student_progress').update(payload).eq('id',existing.id).select().single();if(error)throw error;return data}const{data,error}=await client.from('student_progress').insert({student_id:studentId,content_id:contentId,status:'pending',...payload}).select().single();if(error)throw error;return data
   }
 
+  // ---------- Дүнгийн бүтэц (жин) ба Ирц/Явцын оноо ----------
+  const SCHEME_KEYS=Object.keys(DEFAULT_SCHEME);
+  function normalizeScheme(row){const out={};SCHEME_KEYS.forEach(k=>{const n=Number(row?.[k]);out[k]=Number.isFinite(n)?n:DEFAULT_SCHEME[k]});return out}
+  async function listGradeSchemes(ownerId=null){
+    if(!configured){let a=read(K.schemes,[]);if(ownerId)a=a.filter(x=>x.owner_id===ownerId);return a}
+    let q=client.from('grade_schemes').select('*');if(ownerId)q=q.eq('owner_id',ownerId);
+    const{data,error}=await q;if(error)throw error;return data||[]
+  }
+  async function getGradeScheme(ownerId,grade){
+    const all=await listGradeSchemes(ownerId);
+    const row=all.find(x=>String(x.grade)===String(grade));
+    return {...normalizeScheme(row),grade:String(grade),owner_id:ownerId,exists:Boolean(row)};
+  }
+  async function saveGradeScheme(grade,weights){
+    const s=await getSession();if(!s.user)throw new Error('Нэвтэрсэн хэрэглэгч олдсонгүй.');
+    const w=normalizeScheme(weights);
+    const total=SCHEME_KEYS.reduce((n,k)=>n+w[k],0);
+    if(Math.abs(total-100)>0.01)throw new Error(`Нийт жин 100% байх ёстой. Одоогийн нийлбэр: ${total}%`);
+    if(SCHEME_KEYS.some(k=>w[k]<0))throw new Error('Жин сөрөг байж болохгүй.');
+    if(!configured){
+      const a=read(K.schemes,[]),i=a.findIndex(x=>x.owner_id===s.user.id&&String(x.grade)===String(grade));
+      const row={id:i>=0?a[i].id:makeId(),owner_id:s.user.id,grade:String(grade),...w,updated_at:now()};
+      if(i>=0)a[i]=row;else a.push(row);write(K.schemes,a);return row;
+    }
+    const payload={owner_id:s.user.id,grade:String(grade),...w};
+    const{data,error}=await client.from('grade_schemes').upsert(payload,{onConflict:'owner_id,grade'}).select().single();
+    if(error)throw error;return data;
+  }
+  async function listCategoryScores({ownerId=null,studentId=null}={}){
+    if(!configured){let a=read(K.catscores,[]);if(ownerId)a=a.filter(x=>x.owner_id===ownerId);if(studentId)a=a.filter(x=>x.student_id===studentId);return a}
+    let q=client.from('student_category_scores').select('*');
+    if(ownerId)q=q.eq('owner_id',ownerId);if(studentId)q=q.eq('student_id',studentId);
+    const{data,error}=await q;if(error)throw error;return data||[]
+  }
+  async function saveCategoryScore(studentId,category,score){
+    const s=await getSession();if(!s.user)throw new Error('Нэвтэрсэн хэрэглэгч олдсонгүй.');
+    if(!['attendance','participation'].includes(category))throw new Error('Ангилал буруу байна.');
+    const value=score===''||score==null?null:Number(score);
+    if(value!=null&&(!Number.isFinite(value)||value<0||value>100))throw new Error('Оноо 0–100 хооронд байна.');
+    if(!configured){
+      const a=read(K.catscores,[]),i=a.findIndex(x=>x.owner_id===s.user.id&&x.student_id===studentId&&x.category===category);
+      const row={id:i>=0?a[i].id:makeId(),owner_id:s.user.id,student_id:studentId,category,score:value,updated_at:now()};
+      if(i>=0)a[i]=row;else a.push(row);write(K.catscores,a);return row;
+    }
+    const{data,error}=await client.from('student_category_scores').upsert({owner_id:s.user.id,student_id:studentId,category,score:value},{onConflict:'owner_id,student_id,category'}).select().single();
+    if(error)throw error;return data;
+  }
+
   async function listUsers(){if(!configured)return read(K.users,[]).map(({password,...u})=>u);const{data,error}=await client.from('profiles').select('*').order('created_at',{ascending:false});if(error)throw error;return data||[]}
   async function updateUser(userId,patch){if(!configured){const a=read(K.users,[]),i=a.findIndex(u=>u.id===userId);if(i>=0){a[i]={...a[i],...patch};write(K.users,a);return a[i]}throw new Error('Хэрэглэгч олдсонгүй.')}const{data,error}=await client.from('profiles').update(patch).eq('id',userId).select().single();if(error)throw error;return data}
 
-  window.GeoBackend={mode:configured?'supabase':'demo',client,getSession,signIn,signUpUnified,signOut,getSettings,saveSettings,listContent,saveContent,deleteContent,togglePublished,openResource,listStudentContent,listStudentProgress,touchStudentProgress,setStudentProgress,listTeacherStudents,listTeacherProgress,saveGrade,listUsers,updateUser};
+  window.GeoBackend={mode:configured?'supabase':'demo',client,getSession,signIn,signUpUnified,signOut,getSettings,saveSettings,listContent,saveContent,deleteContent,togglePublished,openResource,listStudentContent,listStudentProgress,touchStudentProgress,setStudentProgress,listTeacherStudents,listTeacherProgress,saveGrade,listUsers,updateUser,DEFAULT_SCHEME,SCHEME_KEYS,listGradeSchemes,getGradeScheme,saveGradeScheme,listCategoryScores,saveCategoryScore};
 })();
