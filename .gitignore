@@ -1,0 +1,16 @@
+# Нууц түлхүүр — ХЭЗЭЭ Ч git-д оруулж болохгүй
+.env
+.env.*
+*.key
+*.pem
+secrets.json
+
+# Хөгжүүлэлтийн түр файлууд
+node_modules/
+.vercel/
+.netlify/
+.DS_Store
+Thumbs.db
+
+# Хэмжээ их сургалтын материал (Supabase Storage эсвэл Drive дээр байршуулна)
+surah bichig/
